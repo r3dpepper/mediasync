@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Media Server Test</title>
+    <style>
+        body { font-family: Arial; padding: 20px; background: #000; color: #fff; }
+        video { width: 100%; max-width: 800px; }
+        .info { margin: 20px 0; padding: 10px; background: #333; }
+    </style>
+</head>
+<body>
+    <h1>Media Server Connection Test</h1>
+    
+    <div class="info">
+        <p>Server URL: <span id="serverUrl"></span></p>
+        <p>Status: <span id="status">Testing...</span></p>
+    </div>
+    
+    <h2>Test Video</h2>
+    <video id="testVideo" controls>
+        <source src="http://192.168.12.152:8080/api/stream/20926b0a08a6fceaea8daf3d487c793efe581b7aa8ff883db279a61a3277dacd?transcode=true" type="video/mp4">
+    </video>
+    
+    <script>
+        const serverUrl = 'http://192.168.12.152:8080';
+        document.getElementById('serverUrl').textContent = serverUrl;
+        
+        fetch(serverUrl + '/api/health')
+            .then(r => r.json())
+            .then(data => {
+                document.getElementById('status').textContent = 'Connected - ' + data.status;
+            })
+            .catch(err => {
+                document.getElementById('status').textContent = 'Failed - ' + err.message;
+            });
+            
+        const video = document.getElementById('testVideo');
+        video.addEventListener('error', (e) => {
+            console.error('Video error:', e);
+            alert('Video error: ' + video.error.code);
+        });
+    </script>
+</body>
+</html>
